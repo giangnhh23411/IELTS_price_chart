@@ -7,9 +7,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap');
-
+ 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
+ 
   :root {
     --bg: #f7f6f2;
     --surface: #ffffff;
@@ -23,7 +23,7 @@
     --offline-tag: #3c3489;
     --offline-tag-bg: #eeedfe;
   }
-
+ 
   body {
     font-family: 'Be Vietnam Pro', sans-serif;
     background: var(--bg);
@@ -31,12 +31,12 @@
     min-height: 100vh;
     padding: 40px 24px 60px;
   }
-
+ 
   .page-header {
     max-width: 860px;
     margin: 0 auto 40px;
   }
-
+ 
   .page-header h1 {
     font-size: 26px;
     font-weight: 700;
@@ -44,13 +44,13 @@
     color: var(--text-primary);
     margin-bottom: 6px;
   }
-
+ 
   .page-header p {
     font-size: 14px;
     color: var(--text-secondary);
     line-height: 1.6;
   }
-
+ 
   .chart-card {
     background: var(--surface);
     border: 0.5px solid var(--border);
@@ -60,20 +60,20 @@
     margin: 0 auto 28px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
   }
-
+ 
   .card-header {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
   }
-
+ 
   .card-header h2 {
     font-size: 15px;
     font-weight: 600;
     color: var(--text-primary);
   }
-
+ 
   .tag {
     font-size: 11px;
     font-weight: 600;
@@ -81,17 +81,17 @@
     border-radius: 20px;
     letter-spacing: 0.3px;
   }
-
+ 
   .tag-online  { background: var(--online-tag-bg);  color: var(--online-tag); }
   .tag-offline { background: var(--offline-tag-bg); color: var(--offline-tag); }
-
+ 
   .legend {
     display: flex;
     flex-wrap: wrap;
     gap: 8px 16px;
     margin-bottom: 20px;
   }
-
+ 
   .legend-item {
     display: flex;
     align-items: center;
@@ -102,38 +102,38 @@
     transition: opacity 0.2s;
     user-select: none;
   }
-
+ 
   .legend-item:hover { opacity: 0.75; }
-
+ 
   .legend-item.hidden { opacity: 0.35; }
-
+ 
   .legend-dot {
     width: 20px;
     height: 3px;
     border-radius: 2px;
     flex-shrink: 0;
   }
-
+ 
   .chart-wrapper {
     position: relative;
     width: 100%;
     height: 340px;
   }
-
+ 
   .chart-note {
     font-size: 11px;
     color: var(--text-muted);
     text-align: center;
     margin-top: 14px;
   }
-
+ 
   .divider {
     max-width: 860px;
     margin: 0 auto 28px;
     border: none;
     border-top: 0.5px solid var(--border);
   }
-
+ 
   footer {
     max-width: 860px;
     margin: 0 auto;
@@ -144,12 +144,12 @@
 </style>
 </head>
 <body>
-
+ 
 <div class="page-header">
   <h1>Học phí IELTS theo Band điểm đầu ra</h1>
   <p>So sánh mức giá mỗi giờ học (nghìn đồng/h) giữa các trung tâm luyện thi IELTS — hình thức Online và Offline. Rê chuột lên biểu đồ để xem chi tiết.</p>
 </div>
-
+ 
 <!-- ONLINE -->
 <div class="chart-card">
   <div class="card-header">
@@ -162,7 +162,7 @@
   </div>
   <p class="chart-note">Trục X: Mốc band điểm đầu ra &nbsp;·&nbsp; Trục Y: nghìn đồng / giờ &nbsp;·&nbsp; Nhấp vào chú thích để ẩn/hiện đường</p>
 </div>
-
+ 
 <!-- OFFLINE -->
 <div class="chart-card">
   <div class="card-header">
@@ -175,12 +175,12 @@
   </div>
   <p class="chart-note">Trục X: Mốc band điểm đầu ra &nbsp;·&nbsp; Trục Y: nghìn đồng / giờ &nbsp;·&nbsp; Nhấp vào chú thích để ẩn/hiện đường</p>
 </div>
-
+ 
 <footer>Nguồn: Bảng giá khóa học IELTS tổng hợp · Dữ liệu học phí trực tuyến và tại lớp</footer>
-
+ 
 <script>
 const bands = ['3.0','4.0','4.5','5.0','5.5','6.0','6.5','7.0','7.5','8.0'];
-
+ 
 const palette = {
   '1984':    '#1D9E75',
   'weset':   '#7F77DD',
@@ -192,7 +192,7 @@ const palette = {
   'british': '#888780',
   'iibear':  '#E24B4A',
 };
-
+ 
 function makeDS(label, key, pts) {
   return {
     label,
@@ -214,7 +214,7 @@ function makeDS(label, key, pts) {
     fill: false,
   };
 }
-
+ 
 const onlineSets = [
   makeDS('IELTS 1984',    '1984',    [{x:'4.0',y:165},{x:'5.0',y:172},{x:'6.0',y:178},{x:'6.5',y:173}]),
   makeDS('Weset',         'weset',   [{x:'5.0',y:238},{x:'7.0',y:226}]),
@@ -225,7 +225,7 @@ const onlineSets = [
   makeDS('IZONE',         'izone',   [{x:'3.0',y:64},{x:'4.0',y:65},{x:'5.0',y:83},{x:'6.0',y:94},{x:'7.0',y:111}]),
   makeDS('IIBear',        'iibear',  [{x:'3.0',y:139},{x:'5.0',y:159},{x:'6.0',y:179}]),
 ];
-
+ 
 const offlineSets = [
   makeDS('IELTS 1984',    '1984',    [{x:'4.0',y:170},{x:'5.0',y:178},{x:'6.0',y:183},{x:'6.5',y:178}]),
   makeDS('Weset',         'weset',   [{x:'5.0',y:271},{x:'7.0',y:258}]),
@@ -236,7 +236,71 @@ const offlineSets = [
   makeDS('British Council','british',[{x:'6.5',y:410}]),
   makeDS('IIBear',        'iibear',  [{x:'3.0',y:139},{x:'5.0',y:159},{x:'6.0',y:179}]),
 ];
-
+ 
+// Custom external tooltip: only shows centers with actual data at the hovered point
+function makeTooltipEl(id) {
+  let el = document.getElementById(id);
+  if (!el) {
+    el = document.createElement('div');
+    el.id = id;
+    el.style.cssText = [
+      'position:fixed','pointer-events:none','z-index:9999',
+      'background:#1a1a18','color:#f7f6f2','border-radius:10px',
+      'padding:12px 14px','font-family:"Be Vietnam Pro",sans-serif',
+      'font-size:12px','line-height:1.8','min-width:190px',
+      'box-shadow:0 4px 24px rgba(0,0,0,0.22)',
+      'border:1px solid rgba(255,255,255,0.09)',
+      'opacity:0','transition:opacity 0.12s',
+    ].join(';');
+    document.body.appendChild(el);
+  }
+  return el;
+}
+ 
+function externalTooltip(tooltipId) {
+  return function({ chart, tooltip }) {
+    const el = makeTooltipEl(tooltipId);
+    if (tooltip.opacity === 0) { el.style.opacity = '0'; return; }
+ 
+    // The hovered data point's x band
+    const dp = tooltip.dataPoints && tooltip.dataPoints[0];
+    if (!dp) { el.style.opacity = '0'; return; }
+    const bandLabel = dp.raw.x;
+ 
+    // Collect only datasets with an exact data point at this x band
+    const rows = [];
+    chart.data.datasets.forEach((ds, i) => {
+      if (chart.getDatasetMeta(i).hidden) return;
+      const match = ds.data.find(d => d.x === bandLabel);
+      if (match) rows.push({ label: ds.label, color: ds.borderColor, y: match.y });
+    });
+ 
+    if (!rows.length) { el.style.opacity = '0'; return; }
+    rows.sort((a, b) => b.y - a.y);
+ 
+    let html = `<div style="font-size:13px;font-weight:600;margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,0.1);color:#fff">Band ${bandLabel}</div>`;
+    rows.forEach(r => {
+      html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
+        <span style="width:9px;height:9px;border-radius:50%;background:${r.color};flex-shrink:0;border:1.5px solid rgba(255,255,255,0.3);"></span>
+        <span style="color:#bbb;flex:1;white-space:nowrap;">${r.label}</span>
+        <span style="font-weight:600;color:#fff;margin-left:12px;">${r.y.toLocaleString('vi-VN')}k/h</span>
+      </div>`;
+    });
+    el.innerHTML = html;
+ 
+    // Position near cursor using caretX/Y relative to canvas
+    const rect = chart.canvas.getBoundingClientRect();
+    let left = rect.left + tooltip.caretX + 16;
+    let top  = rect.top  + tooltip.caretY - 10;
+    // Clamp to viewport
+    const w = el.offsetWidth || 200;
+    if (left + w > window.innerWidth - 8) left = rect.left + tooltip.caretX - w - 12;
+    el.style.left = left + 'px';
+    el.style.top  = top  + 'px';
+    el.style.opacity = '1';
+  };
+}
+ 
 function buildLegend(containerId, chart, datasets) {
   const container = document.getElementById(containerId);
   datasets.forEach((ds, i) => {
@@ -252,32 +316,17 @@ function buildLegend(containerId, chart, datasets) {
     container.appendChild(item);
   });
 }
-
-const commonOpts = (maxY) => ({
+ 
+const commonOpts = (maxY, tooltipId) => ({
   responsive: true,
   maintainAspectRatio: false,
   parsing: false,
-  interaction: { mode: 'index', intersect: false },
+  interaction: { mode: 'nearest', intersect: true, axis: 'xy' },
   plugins: {
     legend: { display: false },
     tooltip: {
-      backgroundColor: '#1a1a18',
-      titleColor: '#f7f6f2',
-      bodyColor: '#cccccc',
-      borderColor: 'rgba(255,255,255,0.08)',
-      borderWidth: 1,
-      padding: 12,
-      titleFont: { family: "'Be Vietnam Pro', sans-serif", size: 13, weight: '600' },
-      bodyFont: { family: "'Be Vietnam Pro', sans-serif", size: 12 },
-      callbacks: {
-        title: items => 'Band ' + items[0].raw.x,
-        label: item => {
-          const val = item.raw.y;
-          return `  ${item.dataset.label}: ${val.toLocaleString('vi-VN')}k đ/h`;
-        },
-        afterBody: () => '',
-      },
-      itemSort: (a, b) => b.raw.y - a.raw.y,
+      enabled: false,
+      external: externalTooltip(tooltipId),
     }
   },
   scales: {
@@ -314,19 +363,19 @@ const commonOpts = (maxY) => ({
     }
   }
 });
-
+ 
 const onlineChart = new Chart(document.getElementById('onlineChart'), {
   type: 'line',
   data: { datasets: onlineSets },
-  options: commonOpts(320),
+  options: commonOpts(320, 'tt-online'),
 });
-
+ 
 const offlineChart = new Chart(document.getElementById('offlineChart'), {
   type: 'line',
   data: { datasets: offlineSets },
-  options: commonOpts(460),
+  options: commonOpts(460, 'tt-offline'),
 });
-
+ 
 buildLegend('legend-online',  onlineChart,  onlineSets);
 buildLegend('legend-offline', offlineChart, offlineSets);
 </script>
