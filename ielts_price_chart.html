@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Học phí IELTS theo Band điểm</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f7f6f2;
+    --surface: #ffffff;
+    --border: rgba(0,0,0,0.08);
+    --text-primary: #1a1a18;
+    --text-secondary: #6b6b65;
+    --text-muted: #9f9f98;
+    --accent: #1a1a18;
+    --online-tag: #0f6e56;
+    --online-tag-bg: #e1f5ee;
+    --offline-tag: #3c3489;
+    --offline-tag-bg: #eeedfe;
+  }
+
+  body {
+    font-family: 'Be Vietnam Pro', sans-serif;
+    background: var(--bg);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 40px 24px 60px;
+  }
+
+  .page-header {
+    max-width: 860px;
+    margin: 0 auto 40px;
+  }
+
+  .page-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--text-primary);
+    margin-bottom: 6px;
+  }
+
+  .page-header p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  .chart-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 28px 24px;
+    max-width: 860px;
+    margin: 0 auto 28px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .card-header h2 {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .tag {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.3px;
+  }
+
+  .tag-online  { background: var(--online-tag-bg);  color: var(--online-tag); }
+  .tag-offline { background: var(--offline-tag-bg); color: var(--offline-tag); }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    margin-bottom: 20px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: opacity 0.2s;
+    user-select: none;
+  }
+
+  .legend-item:hover { opacity: 0.75; }
+
+  .legend-item.hidden { opacity: 0.35; }
+
+  .legend-dot {
+    width: 20px;
+    height: 3px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .chart-wrapper {
+    position: relative;
+    width: 100%;
+    height: 340px;
+  }
+
+  .chart-note {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-top: 14px;
+  }
+
+  .divider {
+    max-width: 860px;
+    margin: 0 auto 28px;
+    border: none;
+    border-top: 0.5px solid var(--border);
+  }
+
+  footer {
+    max-width: 860px;
+    margin: 0 auto;
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Học phí IELTS theo Band điểm đầu ra</h1>
+  <p>So sánh mức giá mỗi giờ học (nghìn đồng/h) giữa các trung tâm luyện thi IELTS — hình thức Online và Offline. Rê chuột lên biểu đồ để xem chi tiết.</p>
+</div>
+
+<!-- ONLINE -->
+<div class="chart-card">
+  <div class="card-header">
+    <h2>Học phí theo giờ</h2>
+    <span class="tag tag-online">🌐 Online</span>
+  </div>
+  <div class="legend" id="legend-online"></div>
+  <div class="chart-wrapper">
+    <canvas id="onlineChart" role="img" aria-label="Biểu đồ học phí online theo band IELTS">Học phí online các trung tâm IELTS theo band điểm.</canvas>
+  </div>
+  <p class="chart-note">Trục X: Mốc band điểm đầu ra &nbsp;·&nbsp; Trục Y: nghìn đồng / giờ &nbsp;·&nbsp; Nhấp vào chú thích để ẩn/hiện đường</p>
+</div>
+
+<!-- OFFLINE -->
+<div class="chart-card">
+  <div class="card-header">
+    <h2>Học phí theo giờ</h2>
+    <span class="tag tag-offline">🏫 Offline</span>
+  </div>
+  <div class="legend" id="legend-offline"></div>
+  <div class="chart-wrapper">
+    <canvas id="offlineChart" role="img" aria-label="Biểu đồ học phí offline theo band IELTS">Học phí offline các trung tâm IELTS theo band điểm.</canvas>
+  </div>
+  <p class="chart-note">Trục X: Mốc band điểm đầu ra &nbsp;·&nbsp; Trục Y: nghìn đồng / giờ &nbsp;·&nbsp; Nhấp vào chú thích để ẩn/hiện đường</p>
+</div>
+
+<footer>Nguồn: Bảng giá khóa học IELTS tổng hợp · Dữ liệu học phí trực tuyến và tại lớp</footer>
+
+<script>
+const bands = ['3.0','4.0','4.5','5.0','5.5','6.0','6.5','7.0','7.5','8.0'];
+
+const palette = {
+  '1984':    '#1D9E75',
+  'weset':   '#7F77DD',
+  'forum':   '#D85A30',
+  'zim':     '#378ADD',
+  'workshop':'#BA7517',
+  'xalo':    '#D4537E',
+  'izone':   '#639922',
+  'british': '#888780',
+  'iibear':  '#E24B4A',
+};
+
+function makeDS(label, key, pts) {
+  return {
+    label,
+    _key: key,
+    data: pts,
+    borderColor: palette[key],
+    backgroundColor: palette[key] + '18',
+    borderWidth: 2.5,
+    pointRadius: 5,
+    pointHoverRadius: 8,
+    pointBackgroundColor: palette[key],
+    pointBorderColor: '#fff',
+    pointBorderWidth: 2,
+    pointHoverBackgroundColor: palette[key],
+    pointHoverBorderColor: '#fff',
+    pointHoverBorderWidth: 2.5,
+    tension: 0.35,
+    spanGaps: true,
+    fill: false,
+  };
+}
+
+const onlineSets = [
+  makeDS('IELTS 1984',    '1984',    [{x:'4.0',y:165},{x:'5.0',y:172},{x:'6.0',y:178},{x:'6.5',y:173}]),
+  makeDS('Weset',         'weset',   [{x:'5.0',y:238},{x:'7.0',y:226}]),
+  makeDS('The Forum',     'forum',   [{x:'4.0',y:87},{x:'5.0',y:111},{x:'6.0',y:111},{x:'7.0',y:104},{x:'8.0',y:104}]),
+  makeDS('Zim Academy',   'zim',     [{x:'4.5',y:158},{x:'5.5',y:185},{x:'6.5',y:227},{x:'7.5',y:267}]),
+  makeDS('IELTS Workshop','workshop',[{x:'3.0',y:124},{x:'4.0',y:133},{x:'5.0',y:138},{x:'6.0',y:165},{x:'6.5',y:145},{x:'7.5',y:238}]),
+  makeDS('Xa Lộ English', 'xalo',    [{x:'6.0',y:185},{x:'7.0',y:185}]),
+  makeDS('IZONE',         'izone',   [{x:'3.0',y:64},{x:'4.0',y:65},{x:'5.0',y:83},{x:'6.0',y:94},{x:'7.0',y:111}]),
+  makeDS('IIBear',        'iibear',  [{x:'3.0',y:139},{x:'5.0',y:159},{x:'6.0',y:179}]),
+];
+
+const offlineSets = [
+  makeDS('IELTS 1984',    '1984',    [{x:'4.0',y:170},{x:'5.0',y:178},{x:'6.0',y:183},{x:'6.5',y:178}]),
+  makeDS('Weset',         'weset',   [{x:'5.0',y:271},{x:'7.0',y:258}]),
+  makeDS('The Forum',     'forum',   [{x:'4.0',y:127},{x:'5.0',y:128},{x:'6.0',y:128},{x:'7.0',y:127}]),
+  makeDS('IELTS Workshop','workshop',[{x:'3.0',y:169},{x:'4.0',y:197},{x:'5.0',y:192},{x:'6.0',y:218},{x:'6.5',y:186},{x:'7.5',y:270}]),
+  makeDS('Xa Lộ English', 'xalo',    [{x:'6.0',y:252},{x:'7.0',y:252}]),
+  makeDS('IZONE',         'izone',   [{x:'3.0',y:64},{x:'4.0',y:65},{x:'5.0',y:83},{x:'6.0',y:94},{x:'7.0',y:111}]),
+  makeDS('British Council','british',[{x:'6.5',y:410}]),
+  makeDS('IIBear',        'iibear',  [{x:'3.0',y:139},{x:'5.0',y:159},{x:'6.0',y:179}]),
+];
+
+function buildLegend(containerId, chart, datasets) {
+  const container = document.getElementById(containerId);
+  datasets.forEach((ds, i) => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.innerHTML = `<span class="legend-dot" style="background:${ds.borderColor}"></span>${ds.label}`;
+    item.addEventListener('click', () => {
+      const meta = chart.getDatasetMeta(i);
+      meta.hidden = !meta.hidden;
+      item.classList.toggle('hidden', meta.hidden);
+      chart.update();
+    });
+    container.appendChild(item);
+  });
+}
+
+const commonOpts = (maxY) => ({
+  responsive: true,
+  maintainAspectRatio: false,
+  parsing: false,
+  interaction: { mode: 'index', intersect: false },
+  plugins: {
+    legend: { display: false },
+    tooltip: {
+      backgroundColor: '#1a1a18',
+      titleColor: '#f7f6f2',
+      bodyColor: '#cccccc',
+      borderColor: 'rgba(255,255,255,0.08)',
+      borderWidth: 1,
+      padding: 12,
+      titleFont: { family: "'Be Vietnam Pro', sans-serif", size: 13, weight: '600' },
+      bodyFont: { family: "'Be Vietnam Pro', sans-serif", size: 12 },
+      callbacks: {
+        title: items => 'Band ' + items[0].raw.x,
+        label: item => {
+          const val = item.raw.y;
+          return `  ${item.dataset.label}: ${val.toLocaleString('vi-VN')}k đ/h`;
+        },
+        afterBody: () => '',
+      },
+      itemSort: (a, b) => b.raw.y - a.raw.y,
+    }
+  },
+  scales: {
+    x: {
+      type: 'category',
+      labels: bands,
+      title: {
+        display: true,
+        text: 'Band điểm đầu ra',
+        font: { family: "'Be Vietnam Pro', sans-serif", size: 11 },
+        color: '#9f9f98',
+        padding: { top: 8 }
+      },
+      grid: { color: 'rgba(0,0,0,0.05)', lineWidth: 1 },
+      border: { color: 'rgba(0,0,0,0.08)' },
+      ticks: { color: '#9f9f98', font: { family: "'Be Vietnam Pro', sans-serif", size: 11 } }
+    },
+    y: {
+      min: 0,
+      max: maxY,
+      title: {
+        display: true,
+        text: 'nghìn đồng / giờ',
+        font: { family: "'Be Vietnam Pro', sans-serif", size: 11 },
+        color: '#9f9f98',
+      },
+      grid: { color: 'rgba(0,0,0,0.05)', lineWidth: 1 },
+      border: { color: 'rgba(0,0,0,0.08)', dash: [4,3] },
+      ticks: {
+        color: '#9f9f98',
+        font: { family: "'Be Vietnam Pro', sans-serif", size: 11 },
+        callback: v => v + 'k'
+      }
+    }
+  }
+});
+
+const onlineChart = new Chart(document.getElementById('onlineChart'), {
+  type: 'line',
+  data: { datasets: onlineSets },
+  options: commonOpts(320),
+});
+
+const offlineChart = new Chart(document.getElementById('offlineChart'), {
+  type: 'line',
+  data: { datasets: offlineSets },
+  options: commonOpts(460),
+});
+
+buildLegend('legend-online',  onlineChart,  onlineSets);
+buildLegend('legend-offline', offlineChart, offlineSets);
+</script>
+</body>
+</html>
