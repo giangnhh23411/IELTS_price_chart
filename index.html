@@ -7,9 +7,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700&display=swap');
- 
+
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
- 
+
   :root {
     --bg: #f7f6f2;
     --surface: #ffffff;
@@ -23,7 +23,7 @@
     --offline-tag: #3c3489;
     --offline-tag-bg: #eeedfe;
   }
- 
+
   body {
     font-family: 'Be Vietnam Pro', sans-serif;
     background: var(--bg);
@@ -31,12 +31,12 @@
     min-height: 100vh;
     padding: 40px 24px 60px;
   }
- 
+
   .page-header {
     max-width: 860px;
     margin: 0 auto 40px;
   }
- 
+
   .page-header h1 {
     font-size: 26px;
     font-weight: 700;
@@ -44,13 +44,13 @@
     color: var(--text-primary);
     margin-bottom: 6px;
   }
- 
+
   .page-header p {
     font-size: 14px;
     color: var(--text-secondary);
     line-height: 1.6;
   }
- 
+
   .chart-card {
     background: var(--surface);
     border: 0.5px solid var(--border);
@@ -60,20 +60,20 @@
     margin: 0 auto 28px;
     box-shadow: 0 1px 4px rgba(0,0,0,0.04);
   }
- 
+
   .card-header {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-bottom: 20px;
   }
- 
+
   .card-header h2 {
     font-size: 15px;
     font-weight: 600;
     color: var(--text-primary);
   }
- 
+
   .tag {
     font-size: 11px;
     font-weight: 600;
@@ -81,17 +81,17 @@
     border-radius: 20px;
     letter-spacing: 0.3px;
   }
- 
+
   .tag-online  { background: var(--online-tag-bg);  color: var(--online-tag); }
   .tag-offline { background: var(--offline-tag-bg); color: var(--offline-tag); }
- 
+
   .legend {
     display: flex;
     flex-wrap: wrap;
     gap: 8px 16px;
     margin-bottom: 20px;
   }
- 
+
   .legend-item {
     display: flex;
     align-items: center;
@@ -102,38 +102,38 @@
     transition: opacity 0.2s;
     user-select: none;
   }
- 
+
   .legend-item:hover { opacity: 0.75; }
- 
+
   .legend-item.hidden { opacity: 0.35; }
- 
+
   .legend-dot {
     width: 20px;
     height: 3px;
     border-radius: 2px;
     flex-shrink: 0;
   }
- 
+
   .chart-wrapper {
     position: relative;
     width: 100%;
-    height: 340px;
+    height: 400px;
   }
- 
+
   .chart-note {
     font-size: 11px;
     color: var(--text-muted);
     text-align: center;
     margin-top: 14px;
   }
- 
+
   .divider {
     max-width: 860px;
     margin: 0 auto 28px;
     border: none;
     border-top: 0.5px solid var(--border);
   }
- 
+
   footer {
     max-width: 860px;
     margin: 0 auto;
@@ -141,15 +141,62 @@
     color: var(--text-muted);
     text-align: center;
   }
+
+  .analysis-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    max-width: 860px;
+    margin: -12px auto 28px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+
+  .analysis-title {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  .band-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12.5px;
+  }
+
+  .band-table th {
+    text-align: left;
+    font-weight: 600;
+    color: var(--text-secondary);
+    padding: 0 8px 10px 0;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  .band-table td {
+    padding: 18px 8px 6px 0;
+    color: var(--text-primary);
+    border-bottom: 0.5px solid rgba(0,0,0,0.04);
+    vertical-align: middle;
+  }
+
+  .band-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+  }
 </style>
 </head>
 <body>
- 
+
 <div class="page-header">
   <h1>Học phí IELTS theo Band điểm đầu ra</h1>
   <p>So sánh mức giá mỗi giờ học (nghìn đồng/h) giữa các trung tâm luyện thi IELTS — hình thức Online và Offline. Rê chuột lên biểu đồ để xem chi tiết.</p>
 </div>
- 
+
 <!-- ONLINE -->
 <div class="chart-card">
   <div class="card-header">
@@ -162,7 +209,8 @@
   </div>
   <p class="chart-note">Trục X: Mốc band điểm đầu ra &nbsp;·&nbsp; Trục Y: nghìn đồng / giờ &nbsp;·&nbsp; Nhấp vào chú thích để ẩn/hiện đường</p>
 </div>
- 
+<div class="analysis-card" id="analysis-online"></div>
+
 <!-- OFFLINE -->
 <div class="chart-card">
   <div class="card-header">
@@ -175,24 +223,31 @@
   </div>
   <p class="chart-note">Trục X: Mốc band điểm đầu ra &nbsp;·&nbsp; Trục Y: nghìn đồng / giờ &nbsp;·&nbsp; Nhấp vào chú thích để ẩn/hiện đường</p>
 </div>
- 
+<div class="analysis-card" id="analysis-offline"></div>
+
 <footer>Nguồn: Bảng giá khóa học IELTS tổng hợp · Dữ liệu học phí trực tuyến và tại lớp</footer>
- 
+
 <script>
 const bands = ['3.0','4.0','4.5','5.0','5.5','6.0','6.5','7.0','7.5','8.0'];
- 
+
 const palette = {
-  '1984':    '#1D9E75',
-  'weset':   '#7F77DD',
-  'forum':   '#D85A30',
-  'zim':     '#378ADD',
-  'workshop':'#BA7517',
-  'xalo':    '#D4537E',
-  'izone':   '#639922',
-  'british': '#888780',
-  'iibear':  '#E24B4A',
+  '1984':      '#1D9E75',
+  'weset':     '#7F77DD',
+  'forum':     '#D85A30',
+  'zim':       '#378ADD',
+  'workshop':  '#BA7517',
+  'xalo':      '#D4537E',
+  'izone':     '#639922',
+  'british':   '#888780',
+  'iibear':    '#E24B4A',
+  'jaxtina':   '#C2720B',
+  'ieltscity': '#0B7DC2',
+  'mcielts':   '#9C27B0',
+  'vus':       '#00838F',
+  'dol':       '#E53935',
+  'thanhloan': '#5D4037',
 };
- 
+
 function makeDS(label, key, pts) {
   return {
     label,
@@ -214,29 +269,38 @@ function makeDS(label, key, pts) {
     fill: false,
   };
 }
- 
+
 const onlineSets = [
-  makeDS('IELTS 1984',    '1984',    [{x:'4.0',y:165},{x:'5.0',y:172},{x:'6.0',y:178},{x:'6.5',y:173}]),
-  makeDS('Weset',         'weset',   [{x:'5.0',y:238},{x:'7.0',y:226}]),
-  makeDS('The Forum',     'forum',   [{x:'4.0',y:87},{x:'5.0',y:111},{x:'6.0',y:111},{x:'7.0',y:104},{x:'8.0',y:104}]),
-  makeDS('Zim Academy',   'zim',     [{x:'4.5',y:158},{x:'5.5',y:185},{x:'6.5',y:227},{x:'7.5',y:267}]),
-  makeDS('IELTS Workshop','workshop',[{x:'3.0',y:124},{x:'4.0',y:133},{x:'5.0',y:138},{x:'6.0',y:165},{x:'6.5',y:145},{x:'7.5',y:238}]),
-  makeDS('Xa Lộ English', 'xalo',    [{x:'6.0',y:185},{x:'7.0',y:185}]),
-  makeDS('IZONE',         'izone',   [{x:'3.0',y:64},{x:'4.0',y:65},{x:'5.0',y:83},{x:'6.0',y:94},{x:'7.0',y:111}]),
-  makeDS('IIBear',        'iibear',  [{x:'3.0',y:139},{x:'5.0',y:159},{x:'6.0',y:179}]),
+  makeDS('IELTS 1984',      '1984',      [{x:'4.0',y:165},{x:'5.0',y:172},{x:'6.0',y:178},{x:'6.5',y:173}]),
+  makeDS('Weset',           'weset',     [{x:'5.0',y:238},{x:'7.0',y:226}]),
+  makeDS('The Forum',       'forum',     [{x:'4.0',y:87},{x:'5.0',y:111},{x:'6.0',y:111},{x:'7.0',y:104},{x:'8.0',y:104}]),
+  makeDS('Zim Academy',     'zim',       [{x:'4.5',y:158},{x:'5.5',y:185},{x:'6.5',y:227},{x:'7.5',y:267}]),
+  makeDS('IELTS Workshop',  'workshop',  [{x:'3.0',y:124},{x:'4.0',y:133},{x:'5.0',y:138},{x:'6.0',y:165},{x:'6.5',y:145},{x:'7.5',y:238}]),
+  makeDS('Xa Lộ English',   'xalo',      [{x:'6.0',y:185},{x:'7.0',y:185}]),
+  makeDS('IZONE',           'izone',     [{x:'3.0',y:64},{x:'4.0',y:65},{x:'5.0',y:83},{x:'6.0',y:94},{x:'7.0',y:111}]),
+  makeDS('IBear IELTS',     'iibear',    [{x:'3.0',y:139},{x:'5.0',y:159},{x:'6.0',y:179}]),
+  makeDS('Mc IELTS',        'mcielts',   [{x:'3.0',y:124},{x:'4.5',y:108},{x:'5.0',y:133},{x:'6.0',y:142},{x:'7.0',y:156}]),
+  makeDS('IELTS City',      'ieltscity', [{x:'5.0',y:159},{x:'6.0',y:179},{x:'6.5',y:238}]),
 ];
- 
+
 const offlineSets = [
-  makeDS('IELTS 1984',    '1984',    [{x:'4.0',y:170},{x:'5.0',y:178},{x:'6.0',y:183},{x:'6.5',y:178}]),
-  makeDS('Weset',         'weset',   [{x:'5.0',y:271},{x:'7.0',y:258}]),
-  makeDS('The Forum',     'forum',   [{x:'4.0',y:127},{x:'5.0',y:128},{x:'6.0',y:128},{x:'7.0',y:127}]),
-  makeDS('IELTS Workshop','workshop',[{x:'3.0',y:169},{x:'4.0',y:197},{x:'5.0',y:192},{x:'6.0',y:218},{x:'6.5',y:186},{x:'7.5',y:270}]),
-  makeDS('Xa Lộ English', 'xalo',    [{x:'6.0',y:252},{x:'7.0',y:252}]),
-  makeDS('IZONE',         'izone',   [{x:'3.0',y:64},{x:'4.0',y:65},{x:'5.0',y:83},{x:'6.0',y:94},{x:'7.0',y:111}]),
-  makeDS('British Council','british',[{x:'6.5',y:410}]),
-  makeDS('IIBear',        'iibear',  [{x:'3.0',y:139},{x:'5.0',y:159},{x:'6.0',y:179}]),
+  makeDS('IELTS 1984',      '1984',      [{x:'4.0',y:170},{x:'5.0',y:178},{x:'6.0',y:183},{x:'6.5',y:178}]),
+  makeDS('Weset',           'weset',     [{x:'5.0',y:271},{x:'7.0',y:258}]),
+  makeDS('The Forum',       'forum',     [{x:'4.0',y:127},{x:'5.0',y:128},{x:'6.0',y:128},{x:'7.0',y:127}]),
+  makeDS('Zim Academy',     'zim',       [{x:'4.5',y:169},{x:'5.5',y:196},{x:'6.5',y:238},{x:'7.5',y:277}]),
+  makeDS('IELTS Workshop',  'workshop',  [{x:'3.0',y:169},{x:'4.0',y:197},{x:'5.0',y:192},{x:'6.0',y:218},{x:'6.5',y:186},{x:'7.5',y:270}]),
+  makeDS('Xa Lộ English',   'xalo',      [{x:'6.0',y:252},{x:'7.0',y:252}]),
+  makeDS('IZONE',           'izone',     [{x:'3.0',y:64},{x:'4.0',y:65},{x:'5.0',y:83},{x:'6.0',y:94},{x:'7.0',y:111}]),
+  makeDS('British Council', 'british',   [{x:'6.5',y:410}]),
+  makeDS('IBear IELTS',     'iibear',    [{x:'3.0',y:139},{x:'5.0',y:159},{x:'6.0',y:179}]),
+  makeDS('Jaxtina',         'jaxtina',   [{x:'4.5',y:150},{x:'5.5',y:160},{x:'6.5',y:180},{x:'7.5',y:200}]),
+  makeDS('IELTS City',      'ieltscity', [{x:'5.0',y:159},{x:'6.0',y:179},{x:'6.5',y:238}]),
+  makeDS('Mc IELTS',        'mcielts',   [{x:'3.0',y:124},{x:'4.5',y:125},{x:'5.0',y:158},{x:'6.0',y:170},{x:'7.0',y:198}]),
+  makeDS('VUS',             'vus',       [{x:'4.5',y:97},{x:'5.0',y:97},{x:'5.5',y:105},{x:'6.0',y:105},{x:'6.5',y:110},{x:'7.5',y:110}]),
+  makeDS('DOL Đình Lực',    'dol',       [{x:'3.0',y:177},{x:'4.0',y:188},{x:'5.0',y:198},{x:'6.0',y:240},{x:'6.5',y:250}]),
+  makeDS('IELTS Thanh Loan','thanhloan', [{x:'4.5',y:83},{x:'6.0',y:117},{x:'6.5',y:167}]),
 ];
- 
+
 // Custom external tooltip: only shows centers with actual data at the hovered point
 function makeTooltipEl(id) {
   let el = document.getElementById(id);
@@ -256,17 +320,17 @@ function makeTooltipEl(id) {
   }
   return el;
 }
- 
+
 function externalTooltip(tooltipId) {
   return function({ chart, tooltip }) {
     const el = makeTooltipEl(tooltipId);
     if (tooltip.opacity === 0) { el.style.opacity = '0'; return; }
- 
+
     // The hovered data point's x band
     const dp = tooltip.dataPoints && tooltip.dataPoints[0];
     if (!dp) { el.style.opacity = '0'; return; }
     const bandLabel = dp.raw.x;
- 
+
     // Collect only datasets with an exact data point at this x band
     const rows = [];
     chart.data.datasets.forEach((ds, i) => {
@@ -274,10 +338,10 @@ function externalTooltip(tooltipId) {
       const match = ds.data.find(d => d.x === bandLabel);
       if (match) rows.push({ label: ds.label, color: ds.borderColor, y: match.y });
     });
- 
+
     if (!rows.length) { el.style.opacity = '0'; return; }
     rows.sort((a, b) => b.y - a.y);
- 
+
     let html = `<div style="font-size:13px;font-weight:600;margin-bottom:8px;padding-bottom:7px;border-bottom:1px solid rgba(255,255,255,0.1);color:#fff">Band ${bandLabel}</div>`;
     rows.forEach(r => {
       html += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:2px;">
@@ -287,7 +351,7 @@ function externalTooltip(tooltipId) {
       </div>`;
     });
     el.innerHTML = html;
- 
+
     // Position near cursor using caretX/Y relative to canvas
     const rect = chart.canvas.getBoundingClientRect();
     let left = rect.left + tooltip.caretX + 16;
@@ -300,7 +364,7 @@ function externalTooltip(tooltipId) {
     el.style.opacity = '1';
   };
 }
- 
+
 function buildLegend(containerId, chart, datasets) {
   const container = document.getElementById(containerId);
   datasets.forEach((ds, i) => {
@@ -316,7 +380,7 @@ function buildLegend(containerId, chart, datasets) {
     container.appendChild(item);
   });
 }
- 
+
 const commonOpts = (maxY, tooltipId) => ({
   responsive: true,
   maintainAspectRatio: false,
@@ -363,21 +427,91 @@ const commonOpts = (maxY, tooltipId) => ({
     }
   }
 });
- 
+
 const onlineChart = new Chart(document.getElementById('onlineChart'), {
   type: 'line',
   data: { datasets: onlineSets },
   options: commonOpts(320, 'tt-online'),
 });
- 
+
 const offlineChart = new Chart(document.getElementById('offlineChart'), {
   type: 'line',
   data: { datasets: offlineSets },
   options: commonOpts(460, 'tt-offline'),
 });
- 
+
 buildLegend('legend-online',  onlineChart,  onlineSets);
 buildLegend('legend-offline', offlineChart, offlineSets);
+
+// ── Analysis: average price range per band ──────────────────────────────────
+function computeAnalysis(datasets) {
+  const byBand = {};
+  datasets.forEach(ds => {
+    ds.data.forEach(pt => {
+      if (!byBand[pt.x]) byBand[pt.x] = { values: [], centers: [] };
+      byBand[pt.x].values.push(pt.y);
+      byBand[pt.x].centers.push(ds.label);
+    });
+  });
+
+  return Object.entries(byBand)
+    .sort((a, b) => parseFloat(a[0]) - parseFloat(b[0]))
+    .map(([band, { values, centers }]) => {
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      const avg = Math.round(values.reduce((s, v) => s + v, 0) / values.length);
+      return { band, min, max, avg, count: values.length, centers };
+    });
+}
+
+function renderAnalysis(containerId, datasets, accentColor) {
+  const rows = computeAnalysis(datasets);
+  const globalMax = Math.max(...rows.map(r => r.max));
+  const container = document.getElementById(containerId);
+
+  let html = `<div class="analysis-title">📊 Khoảng giá trung bình theo band</div>
+  <table class="band-table">
+    <thead>
+      <tr>
+        <th>Band</th>
+        <th>Min</th>
+        <th style="width:55%">Khoảng giá (min — avg — max)</th>
+        <th>Max</th>
+      </tr>
+    </thead>
+    <tbody>`;
+
+  rows.forEach(r => {
+    const minPct  = Math.round((r.min / globalMax) * 100);
+    const avgPct  = Math.round((r.avg / globalMax) * 100);
+    const maxPct  = Math.round((r.max / globalMax) * 100);
+    const rangePct = maxPct - minPct;
+
+    html += `<tr>
+      <td><span class="band-label">${r.band}</span></td>
+      <td style="color:var(--text-secondary);white-space:nowrap;">${r.min}k</td>
+      <td>
+        <div style="position:relative;height:20px;display:flex;align-items:center;">
+          <!-- full track -->
+          <div style="position:absolute;left:0;right:0;height:5px;background:rgba(0,0,0,0.06);border-radius:3px;"></div>
+          <!-- min–max range -->
+          <div style="position:absolute;left:${minPct}%;width:${rangePct}%;height:5px;background:${accentColor}33;border-radius:3px;"></div>
+          <!-- avg marker -->
+          <div style="position:absolute;left:${avgPct}%;transform:translateX(-50%);width:11px;height:11px;border-radius:50%;background:${accentColor};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.18);"></div>
+          <!-- avg label -->
+          <span style="position:absolute;left:${avgPct}%;transform:translateX(-50%);top:-18px;font-size:11px;font-weight:700;color:${accentColor};white-space:nowrap;">${r.avg}k/h</span>
+        </div>
+      </td>
+      <td style="color:var(--text-secondary);white-space:nowrap;text-align:right;">${r.max}k</td>
+    </tr>`;
+  });
+
+  html += `</tbody></table>`;
+  container.innerHTML = html;
+}
+
+renderAnalysis('analysis-online',  onlineSets,  '#1D9E75');
+renderAnalysis('analysis-offline', offlineSets, '#3c3489');
 </script>
 </body>
 </html>
